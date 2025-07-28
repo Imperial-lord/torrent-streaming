@@ -7,28 +7,10 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import RequireAuth from "./components/RequireAuth";
-import { useEffect } from "react";
-import { getStoredCreds } from "./utils/auth";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    if (navigator.serviceWorker?.controller) {
-      navigator.serviceWorker.controller.postMessage({
-        type: 'SET_CREDENTIALS',
-        basicAuth: getStoredCreds() || ''
-      });
-    } else {
-      navigator.serviceWorker?.ready.then(() => {
-        navigator.serviceWorker.controller?.postMessage({
-          type: 'SET_CREDENTIALS',
-          basicAuth: getStoredCreds() || ''
-        });
-      });
-    }
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

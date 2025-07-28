@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindScrollbarHide from "tailwind-scrollbar-hide";
 
 export default {
     darkMode: ["class"],
@@ -157,5 +158,5 @@ export default {
             }
         }
     },
-    plugins: [tailwindcssAnimate],
+    plugins: [tailwindcssAnimate, tailwindScrollbarHide],
 } satisfies Config;

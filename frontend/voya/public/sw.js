@@ -15,8 +15,6 @@ self.addEventListener('fetch', event => {
         const headers = new Headers(event.request.headers);
         if (basicAuth) headers.set('Authorization', `Basic ${basicAuth}`);
 
-        console.log("Setting basic auth as", basicAuth);
-
         const authReq = new Request(event.request, {
             method: event.request.method,
             headers,

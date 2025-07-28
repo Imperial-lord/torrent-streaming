@@ -22,7 +22,7 @@ const ProfileMenu = () => {
 
     const handleLogout = () => {
         clearCreds();
-        sendCredsToSW();           // wipe SW auth too
+        sendCredsToSW(); // wipe SW auth too
         navigate('/login', { replace: true });
     };
 

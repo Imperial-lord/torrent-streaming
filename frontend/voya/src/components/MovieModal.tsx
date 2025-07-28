@@ -1,7 +1,7 @@
 import { X, Play, Plus, ThumbsUp, Star, Calendar, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog";
 
 interface Movie {
   name: string;
@@ -44,7 +44,8 @@ const MovieModal = ({ movie, isOpen, onClose, onPlay }: MovieModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl p-0 bg-background border-border animate-scale-in">
+      <DialogContent className="max-w-4xl p-0 bg-background border-border animate-scale-in max-h-[90vh] overflow-y-auto scrollbar-hide">
+        <DialogTitle asChild />
         <div className="relative">
           {/* Header Image */}
           <div className="relative h-64 md:h-80 overflow-hidden rounded-t-lg">
@@ -58,18 +59,6 @@ const MovieModal = ({ movie, isOpen, onClose, onPlay }: MovieModalProps) => {
               }}
             />
             <div className="absolute inset-0 bg-gradient-hero" />
-
-            {/* Play Button Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 shadow-netflix animate-glow-pulse"
-                onClick={() => onPlay(movie)}
-              >
-                <Play className="h-6 w-6 mr-2" />
-                Play Now
-              </Button>
-            </div>
           </div>
 
           {/* Content */}
@@ -122,6 +111,16 @@ const MovieModal = ({ movie, isOpen, onClose, onPlay }: MovieModalProps) => {
                 ))}
               </div>
             </div>
+
+            {/* Play Button Overlay */}
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 shadow-netflix animate-glow-pulse"
+              onClick={() => onPlay(movie)}
+            >
+              <Play className="h-6 w-6 mr-2" />
+              Play Now
+            </Button>
 
             {/* Plot */}
             <div className="space-y-2">

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { toast } from 'sonner';
 
 interface VideoPlayerProps {
     videoUrl: string;
@@ -23,6 +24,8 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
     const [isMuted, setIsMuted] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isBuffering, setIsBuffering] = useState(true);
+    const SEEK = 10;
 
     let controlsTimeout: NodeJS.Timeout;
 
@@ -34,7 +37,14 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
         const handleDurationChange = () => setDuration(video.duration);
         const handlePlay = () => setIsPlaying(true);
         const handlePause = () => setIsPlaying(false);
+        const handleWaiting = () => setIsBuffering(true);   // fires when browser empties the buffer
+        const handlePlaying = () => setIsBuffering(false);  // fires when playback resumes
+        const handleCanPlay = () => setIsBuffering(false);  // covers initial load & seeks
 
+        video.addEventListener('waiting', handleWaiting);
+        video.addEventListener('stalled', handleWaiting);     // network hiccup
+        video.addEventListener('playing', handlePlaying);
+        video.addEventListener('canplay', handleCanPlay);
         video.addEventListener('timeupdate', handleTimeUpdate);
         video.addEventListener('durationchange', handleDurationChange);
         video.addEventListener('play', handlePlay);
@@ -46,6 +56,26 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
             video.removeEventListener('play', handlePlay);
             video.removeEventListener('pause', handlePause);
         };
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKey = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    skipTime(SEEK);
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    skipTime(-SEEK);
+                    break;
+                default:
+                    return;
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
     }, [isOpen]);
 
     const togglePlay = () => {
@@ -141,6 +171,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-6xl p-0 bg-black border-none">
+                <DialogTitle asChild />
                 <div
                     ref={videoContainerRef}
                     className={`relative bg-black ${!showControls ? 'cursor-none' : 'cursor-default'}`}
@@ -224,7 +255,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => skipTime(-10)}
+                                    onClick={() => skipTime(-SEEK)}
                                     className="text-white hover:bg-white/20"
                                 >
                                     <SkipBack className="h-5 w-5" />
@@ -232,7 +263,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => skipTime(10)}
+                                    onClick={() => skipTime(SEEK)}
                                     className="text-white hover:bg-white/20"
                                 >
                                     <SkipForward className="h-5 w-5" />
@@ -296,7 +327,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                     </div>
 
                     {/* Loading Overlay */}
-                    {!duration && (
+                    {isBuffering && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
                         </div>
