@@ -6,12 +6,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-    private static final String[] ALLOWED_ORIGINS = {"*"};
+    private static final String[] ALLOWED_ORIGINS = {"http://localhost:8080", "https://voya-streaming.netlify.app"};
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
+                .allowedOrigins(ALLOWED_ORIGINS)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)

@@ -74,7 +74,7 @@ const Index = () => {
       <div className="min-h-screen bg-background font-inter flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-destructive">Failed to load movies. Please check if your backend is running.</p>
-          <p className="text-sm text-muted-foreground">Make sure the API is available at https://1da0334c4a8b.ngrok-free.app</p>
+          <p className="text-sm text-muted-foreground">Make sure the API is available at https://4081cc7177d7.ngrok-free.app</p>
         </div>
       </div>
     );

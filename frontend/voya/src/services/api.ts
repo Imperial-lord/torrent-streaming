@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://1da0334c4a8b.ngrok-free.app/api';
+const API_BASE_URL = 'https://4081cc7177d7.ngrok-free.app/api';
 import axios from '../api/axios';
 
 export interface Movie {
@@ -32,6 +32,8 @@ export const movieApi = {
     getAllMovies: async (): Promise<Movie[]> => {
         const res = await axios.get<Movie[]>('/api/movies');
         if (res.status != 200) throw new Error('Failed to fetch movies');
+        console.log(res.status);
+        console.log(res.data);
         return res.data;
     },
 
