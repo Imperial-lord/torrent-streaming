@@ -42,7 +42,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
         const handleCanPlay = () => setIsBuffering(false);  // covers initial load & seeks
 
         video.addEventListener('waiting', handleWaiting);
-        video.addEventListener('stalled', handleWaiting);     // network hiccup
+        video.addEventListener('stalled', handleWaiting);
         video.addEventListener('playing', handlePlaying);
         video.addEventListener('canplay', handleCanPlay);
         video.addEventListener('timeupdate', handleTimeUpdate);
@@ -51,6 +51,10 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
         video.addEventListener('pause', handlePause);
 
         return () => {
+            video.removeEventListener('waiting', handleWaiting);
+            video.removeEventListener('stalled', handleWaiting);
+            video.removeEventListener('playing', handlePlaying);
+            video.removeEventListener('canplay', handleCanPlay);
             video.removeEventListener('timeupdate', handleTimeUpdate);
             video.removeEventListener('durationchange', handleDurationChange);
             video.removeEventListener('play', handlePlay);
