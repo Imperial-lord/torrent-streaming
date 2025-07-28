@@ -24,7 +24,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
     const [isMuted, setIsMuted] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [isBuffering, setIsBuffering] = useState(true);
+    const [isBuffering, setIsBuffering] = useState(false);
     const SEEK = 10;
 
     let controlsTimeout: NodeJS.Timeout;
@@ -33,28 +33,40 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
         const video = videoRef.current;
         if (!video) return;
 
-        const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+        const handleTimeUpdate = () => {
+            setCurrentTime(video.currentTime);
+            hideBuffer();
+        };
         const handleDurationChange = () => setDuration(video.duration);
         const handlePlay = () => setIsPlaying(true);
         const handlePause = () => setIsPlaying(false);
-        const handleWaiting = () => setIsBuffering(true);   // fires when browser empties the buffer
-        const handlePlaying = () => setIsBuffering(false);  // fires when playback resumes
-        const handleCanPlay = () => setIsBuffering(false);  // covers initial load & seeks
+        const showBuffer = () => setIsBuffering(true);
+        const hideBuffer = () => {
+            if (video.readyState >= 3) {
+                setIsBuffering(false);
+            }
+        };
 
-        video.addEventListener('waiting', handleWaiting);
-        video.addEventListener('stalled', handleWaiting);
-        video.addEventListener('playing', handlePlaying);
-        video.addEventListener('canplay', handleCanPlay);
+        video.addEventListener('loadstart', showBuffer);  // first open
+        video.addEventListener('waiting', showBuffer);  // re-buffer
+        video.addEventListener('stalled', showBuffer);  // network hiccup
+        video.addEventListener('playing', hideBuffer);
+        video.addEventListener('canplay', hideBuffer);
+        video.addEventListener('canplaythrough', hideBuffer);
+        video.addEventListener('seeked', hideBuffer);
         video.addEventListener('timeupdate', handleTimeUpdate);
         video.addEventListener('durationchange', handleDurationChange);
         video.addEventListener('play', handlePlay);
         video.addEventListener('pause', handlePause);
 
         return () => {
-            video.removeEventListener('waiting', handleWaiting);
-            video.removeEventListener('stalled', handleWaiting);
-            video.removeEventListener('playing', handlePlaying);
-            video.removeEventListener('canplay', handleCanPlay);
+            video.removeEventListener('loadstart', showBuffer);
+            video.removeEventListener('waiting', showBuffer);
+            video.removeEventListener('stalled', showBuffer);
+            video.removeEventListener('playing', hideBuffer);
+            video.removeEventListener('canplay', hideBuffer);
+            video.removeEventListener('canplaythrough', hideBuffer);
+            video.removeEventListener('seeked', hideBuffer);
             video.removeEventListener('timeupdate', handleTimeUpdate);
             video.removeEventListener('durationchange', handleDurationChange);
             video.removeEventListener('play', handlePlay);
