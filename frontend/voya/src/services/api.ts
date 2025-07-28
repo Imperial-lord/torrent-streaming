@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://4081cc7177d7.ngrok-free.app/api';
+const API_BASE_URL = 'https://8996e90f6735.ngrok-free.app/api';
 import axios from '../api/axios';
 
 export interface Movie {

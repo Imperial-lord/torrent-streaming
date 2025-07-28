@@ -3,7 +3,7 @@ import { getAuthHeader, clearCreds } from '../utils/auth';
 import { redirectToLogin } from '../utils/redirect';
 
 const instance = axios.create({
-    baseURL: 'https://4081cc7177d7.ngrok-free.app',
+    baseURL: 'https://8996e90f6735.ngrok-free.app',
     withCredentials: true,
 });
 
