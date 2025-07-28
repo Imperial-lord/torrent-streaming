@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8081/api';
+const API_BASE_URL = 'http://141.148.160.138/api';
 import axios from '../api/axios';
 
 export interface Movie {

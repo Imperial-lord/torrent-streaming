@@ -3,7 +3,7 @@ import { getAuthHeader, clearCreds } from '../utils/auth';
 import { redirectToLogin } from '../utils/redirect';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://141.148.160.138',
 });
 
 instance.interceptors.request.use(config => {
