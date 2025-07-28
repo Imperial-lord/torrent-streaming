@@ -34,7 +34,7 @@ public class SubtitleController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf("text/vtt"));
         headers.setContentDisposition(ContentDisposition.inline().filename("subtitle.vtt").build());
-    
+
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(new InputStreamResource(subtitleStream));

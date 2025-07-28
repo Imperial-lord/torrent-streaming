@@ -1,20 +1,18 @@
 package com.torrent.streaming.streaming_service.service;
 
 import com.oracle.bmc.secrets.SecretsClient;
-import com.oracle.bmc.secrets.model.Base64SecretBundleContentDetails;
-import com.oracle.bmc.secrets.requests.GetSecretBundleRequest;
-import com.oracle.bmc.secrets.responses.GetSecretBundleResponse;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
+import static com.torrent.streaming.streaming_service.utils.OciSecretHelper.getSecretValue;
 
 @Service
 public class OciSecretManagerService {
     private final SecretsClient secretsClient;
+
     @Getter
     private String bucketName;
     @Getter
@@ -39,20 +37,10 @@ public class OciSecretManagerService {
 
     @PostConstruct
     public void init() {
-        this.namespace = getSecretValue(namespaceSecretOcid);
-        this.bucketName = getSecretValue(bucketNameSecretOcid);
-        this.omdbApiKey = getSecretValue(omdbApiKeyOcid);
-        this.tmdbReadAccessToken = getSecretValue(tmdbReadAccessTokenOcid);
-    }
-
-    private String getSecretValue(String secretOcid) {
-        GetSecretBundleResponse response = secretsClient.getSecretBundle(
-                GetSecretBundleRequest.builder()
-                        .secretId(secretOcid)
-                        .build());
-
-        Base64SecretBundleContentDetails content = (Base64SecretBundleContentDetails) response.getSecretBundle().getSecretBundleContent();
-        return new String(Base64.getDecoder().decode(content.getContent()));
+        this.namespace = getSecretValue(secretsClient, namespaceSecretOcid);
+        this.bucketName = getSecretValue(secretsClient, bucketNameSecretOcid);
+        this.omdbApiKey = getSecretValue(secretsClient, omdbApiKeyOcid);
+        this.tmdbReadAccessToken = getSecretValue(secretsClient, tmdbReadAccessTokenOcid);
     }
 
     @PreDestroy

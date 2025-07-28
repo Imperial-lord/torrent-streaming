@@ -30,7 +30,6 @@ public class MovieService {
     private final OMDBClient omdbClient;
     private final TMDBClient tmdbClient;
     private final MovieRepository movieRepository;
-
     private final String namespace;
     private final String bucketName;
 
