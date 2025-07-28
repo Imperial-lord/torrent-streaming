@@ -3,8 +3,7 @@ import { getAuthHeader, clearCreds } from '../utils/auth';
 import { redirectToLogin } from '../utils/redirect';
 
 const instance = axios.create({
-    baseURL: 'https://8996e90f6735.ngrok-free.app',
-    withCredentials: true,
+    baseURL: 'https://voya-streaming.in',
 });
 
 instance.interceptors.request.use(config => {
