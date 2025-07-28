@@ -24,7 +24,6 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
     const [isMuted, setIsMuted] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [isBuffering, setIsBuffering] = useState(false);
     const SEEK = 10;
 
     let controlsTimeout: NodeJS.Timeout;
@@ -33,40 +32,17 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
         const video = videoRef.current;
         if (!video) return;
 
-        const handleTimeUpdate = () => {
-            setCurrentTime(video.currentTime);
-            hideBuffer();
-        };
+        const handleTimeUpdate = () => setCurrentTime(video.currentTime);
         const handleDurationChange = () => setDuration(video.duration);
         const handlePlay = () => setIsPlaying(true);
         const handlePause = () => setIsPlaying(false);
-        const showBuffer = () => setIsBuffering(true);
-        const hideBuffer = () => {
-            if (video.readyState >= 3) {
-                setIsBuffering(false);
-            }
-        };
 
-        video.addEventListener('loadstart', showBuffer);  // first open
-        video.addEventListener('waiting', showBuffer);  // re-buffer
-        video.addEventListener('stalled', showBuffer);  // network hiccup
-        video.addEventListener('playing', hideBuffer);
-        video.addEventListener('canplay', hideBuffer);
-        video.addEventListener('canplaythrough', hideBuffer);
-        video.addEventListener('seeked', hideBuffer);
         video.addEventListener('timeupdate', handleTimeUpdate);
         video.addEventListener('durationchange', handleDurationChange);
         video.addEventListener('play', handlePlay);
         video.addEventListener('pause', handlePause);
 
         return () => {
-            video.removeEventListener('loadstart', showBuffer);
-            video.removeEventListener('waiting', showBuffer);
-            video.removeEventListener('stalled', showBuffer);
-            video.removeEventListener('playing', hideBuffer);
-            video.removeEventListener('canplay', hideBuffer);
-            video.removeEventListener('canplaythrough', hideBuffer);
-            video.removeEventListener('seeked', hideBuffer);
             video.removeEventListener('timeupdate', handleTimeUpdate);
             video.removeEventListener('durationchange', handleDurationChange);
             video.removeEventListener('play', handlePlay);
@@ -343,7 +319,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                     </div>
 
                     {/* Loading Overlay */}
-                    {isBuffering && (
+                    {!duration && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
                         </div>
