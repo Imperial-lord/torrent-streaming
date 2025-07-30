@@ -1,7 +1,8 @@
-import { X, Play, Plus, ThumbsUp, Star, Calendar, Clock, Users } from "lucide-react";
+import { X, Play, Plus, ThumbsUp, Star, Calendar, Clock, Users, Download, Space, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState } from "react";
 
 interface Movie {
   name: string;
@@ -112,7 +113,7 @@ const MovieModal = ({ movie, isOpen, onClose, onPlay }: MovieModalProps) => {
               </div>
             </div>
 
-            {/* Play Button Overlay */}
+            {/* Play Button */}
             <Button
               size="lg"
               className="bg-primary hover:bg-primary/90 shadow-netflix animate-glow-pulse"

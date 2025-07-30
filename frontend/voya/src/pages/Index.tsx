@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import MovieCard from "@/components/MovieCard";

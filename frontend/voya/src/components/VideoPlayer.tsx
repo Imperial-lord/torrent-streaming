@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { toast } from 'sonner';
 
 interface VideoPlayerProps {
     videoUrl: string;
@@ -24,6 +23,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
     const [isMuted, setIsMuted] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isBuffering, setIsBuffering] = useState(true);
     const SEEK = 10;
 
     let controlsTimeout: NodeJS.Timeout;
@@ -193,6 +193,9 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                             if (video) {
                                 setDuration(video.duration);
                                 video.muted = false;
+                                video.addEventListener("waiting", () => setIsBuffering(true));
+                                video.addEventListener('playing', () => setIsBuffering(false));
+
                                 togglePlay();
                             }
                         }}
@@ -319,7 +322,7 @@ const VideoPlayer = ({ videoUrl, subsUrl, title, isOpen, onClose }: VideoPlayerP
                     </div>
 
                     {/* Loading Overlay */}
-                    {!duration && (
+                    {isBuffering && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
                         </div>
