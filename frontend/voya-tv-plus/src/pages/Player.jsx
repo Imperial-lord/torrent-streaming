@@ -111,7 +111,7 @@ export default function Player() {
         // On URL refresh, restore the last saved position
         if (lastSavedTime.current > 0 && isFinite(v.duration)) {
           v.currentTime = Math.min(lastSavedTime.current, Math.max(0, v.duration - 0.25))
-          console.log(`✅ Restored playback at ${Math.floor(v.currentTime)}s after URL refresh`)
+          // console.log(`✅ Restored playback at ${Math.floor(v.currentTime)}s after URL refresh`)
         }
       }
     }
@@ -201,15 +201,15 @@ export default function Player() {
     const fetchUrl = async () => {
       try {
         const url = await getVideoUrl(m.videoPath)
-        console.log("Fetching new PAR URL")
+        // console.log("Fetching new PAR URL")
 
         // Only update if URL actually changed
         setVideoUrl(prevUrl => {
           if (prevUrl !== url) {
-            console.log("URL changed, updating video source")
+            // console.log("URL changed, updating video source")
             return url
           }
-          console.log("URL unchanged, skipping update")
+          // console.log("URL unchanged, skipping update")
           return prevUrl
         })
 
@@ -237,7 +237,7 @@ export default function Player() {
     const wasPaused = paused
     const savedTime = lastSavedTime.current || v.currentTime || 0
 
-    console.log(`🔄 URL changed, saving position: ${Math.floor(savedTime)}s, paused: ${wasPaused}`)
+    // console.log(`🔄 URL changed, saving position: ${Math.floor(savedTime)}s, paused: ${wasPaused}`)
 
     // Mark that we're refreshing
     isRefreshing.current = true
@@ -253,14 +253,14 @@ export default function Player() {
 
       // Only play if it wasn't paused before the refresh
       if (!wasPaused) {
-        v.play().catch(err => console.log("Autoplay prevented:", err))
+        v.play().catch(err => console.debug("Autoplay prevented:", err))
       } else {
         // Ensure it stays paused
         v.pause()
         setPaused(true)
       }
 
-      console.log(`✅ Resumed at ${Math.floor(v.currentTime)}s after URL refresh (${wasPaused ? 'paused' : 'playing'})`)
+      // console.log(`✅ Resumed at ${Math.floor(v.currentTime)}s after URL refresh (${wasPaused ? 'paused' : 'playing'})`)
     }
 
     // Use canplay instead of loadedmetadata for more reliable resumption
