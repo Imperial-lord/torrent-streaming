@@ -17,19 +17,11 @@ public class OciSecretManagerService {
     private String bucketName;
     @Getter
     private String namespace;
-    @Getter
-    private String omdbApiKey;
-    @Getter
-    private String tmdbReadAccessToken;
 
     @Value("${oci.secret.bucket.ocid}")
     private String bucketNameSecretOcid;
     @Value("${oci.secret.namespace.ocid}")
     private String namespaceSecretOcid;
-    @Value("${oci.secret.omdb.api.key.ocid}")
-    private String omdbApiKeyOcid;
-    @Value("${oci.secret.tmdb.acces.token.ocid}")
-    private String tmdbReadAccessTokenOcid;
 
     public OciSecretManagerService(SecretsClient secretsClient) {
         this.secretsClient = secretsClient;
@@ -39,8 +31,6 @@ public class OciSecretManagerService {
     public void init() {
         this.namespace = getSecretValue(secretsClient, namespaceSecretOcid);
         this.bucketName = getSecretValue(secretsClient, bucketNameSecretOcid);
-        this.omdbApiKey = getSecretValue(secretsClient, omdbApiKeyOcid);
-        this.tmdbReadAccessToken = getSecretValue(secretsClient, tmdbReadAccessTokenOcid);
     }
 
     @PreDestroy

@@ -24,11 +24,11 @@ public class SubtitleService {
         this.bucketName = ociSecretManagerService.getBucketName();
     }
 
-    public InputStream getSubtitles(String objectName) {
+    public InputStream getSubtitles(String subtitlesPath) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucketName(bucketName)
                 .namespaceName(namespace)
-                .objectName(objectName)
+                .objectName(subtitlesPath)
                 .build();
 
         GetObjectResponse getObjectResponse = objectStorageClient.getObject(getObjectRequest);

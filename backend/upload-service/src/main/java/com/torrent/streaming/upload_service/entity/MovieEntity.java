@@ -1,7 +1,7 @@
-package com.torrent.streaming.streaming_service.entity;
+package com.torrent.streaming.upload_service.entity;
 
-import com.torrent.streaming.streaming_service.model.OmdbResponse;
-import com.torrent.streaming.streaming_service.model.TmdbImageResponse;
+import com.torrent.streaming.upload_service.model.OmdbResponse;
+import com.torrent.streaming.upload_service.model.TmdbImageResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

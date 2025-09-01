@@ -1,0 +1,41 @@
+<!-- favicon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">Popcorn Bucket Favicon</title>
+  <desc id="desc">Minimal popcorn bucket favicon in blue with popcorn on top.</desc>
+
+  <!-- Popcorn -->
+  <g transform="translate(0,0)">
+    <path d="M18 26
+             c0-3 3-6 8-6
+             c1.5-3 5-5 8-5
+             c3 0 6 1.7 7.5 4.2
+             c4 0.2 7.5 2.9 7.5 6.3
+             c0 3.3-3 6-7 6H25
+             c-3.9 0-7-2.7-7-5.5Z"
+          fill="#FFE9B3"/>
+    <path d="M22.5 26.5c0-2 2.2-3.8 5-3.8 1-2 3.3-3.5 5.5-3.5"
+          fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Bucket body -->
+  <defs>
+    <linearGradient id="bucketBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1E88E5"/>
+      <stop offset="100%" stop-color="#1565C0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top rim -->
+  <rect x="14" y="26" width="36" height="4" rx="2" ry="2" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Bucket trapezoid -->
+  <path d="M14 28 L18 54 H46 L50 28 Z" fill="url(#bucketBlue)"/>
+
+  <!-- White vertical stripes -->
+  <path d="M20 30 L22.5 54 H26 L23.5 30 Z" fill="#ffffff" opacity="0.95"/>
+  <path d="M31 30 L32.5 54 H35.5 L34 30 Z" fill="#ffffff" opacity="0.95"/>
+  <path d="M42 30 L40 54 H43.5 L45.5 30 Z" fill="#ffffff" opacity="0.95"/>
+
+  <!-- Subtle edge highlight -->
+  <path d="M15 30 L18.5 54" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
+</svg>
