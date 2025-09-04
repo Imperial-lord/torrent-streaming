@@ -15,7 +15,9 @@ const DEFAULT_TRACKERS = [
     'udp://tracker.pirateparty.gr:6969',
     'udp://tracker.cyberia.is:6969'
 ];
+
 const torrentDownloadDir = path.join(__dirname, '../downloads');
+
 const DEFAULT_STATUS = {
     name: '',
     progress: 0,
@@ -25,7 +27,8 @@ const DEFAULT_STATUS = {
     downloadPath: '',
     files: [],
     startTime: null,
-    durationSeconds: null
+    durationSeconds: null,
+    error: null
 };
 
 let status = { ...DEFAULT_STATUS };
@@ -34,44 +37,82 @@ export const downloadTorrent = (torrentUrl) => {
     throwErrorIfInvalidUrl(torrentUrl);
     throwErrorIfDownloading();
 
+    // ✅ Reset status for a clean run (prevents stale isDone/progress, etc.)
+    status = { ...DEFAULT_STATUS, isDone: false, error: null };
+
     const client = new WebTorrent();
-    client.add(torrentUrl, { announce: DEFAULT_TRACKERS, path: torrentDownloadDir }, (torrent) => {
-        console.log(`📥 Started torrenting: ${torrent.name}`);
-        fsExtra.ensureDirSync(torrentDownloadDir);
 
-        const torrentPath = path.join(torrentDownloadDir, torrent.name);
-
-        status.name = torrent.name;
-        status.isDownloading = true;
-        status.downloadPath = torrentPath;
-        status.startTime = Date.now();
-        status.durationSeconds = null;
-        status.files = torrent.files.map(file => ({
-            name: file.name,
-            path: file.path,
-            lengthBytes: file.length
-        }))
-
-        torrent.on('download', (bytes) => {
-            status.progress = +(torrent.progress * 100).toFixed(0);
-            status.downloadedBytes += bytes;
-        });
-
-        torrent.on('done', () => {
-            console.log('🏁 Torrent download complete');
-            status.isDone = true;
-            status.isDownloading = false;
-            const endTime = Date.now();
-            status.durationSeconds = Math.round((endTime - status.startTime) / 1000);
-            client.remove(torrent.infoHash);
-        });
-
-        torrent.on('error', (err) => {
-            console.error('❌ Torrent error:', err);
-            status = { ...status, isDownloading: false };
-            client.destroy();
-        });
+    // Optional: capture client-level errors too
+    client.on('error', (err) => {
+        status.isDownloading = false;
+        status.isDone = false;
+        status.error = err?.message || String(err);
+        try { client.destroy(); } catch {}
     });
+
+    client.add(
+        torrentUrl,
+        { announce: DEFAULT_TRACKERS, path: torrentDownloadDir },
+        (torrent) => {
+            console.log(`📥 Started torrenting: ${torrent.name}`);
+            fsExtra.ensureDirSync(torrentDownloadDir);
+
+            const torrentPath = path.join(torrentDownloadDir, torrent.name);
+
+            // mark as downloading only when we actually have the torrent
+            status.isDownloading = true;
+            status.isDone = false;
+            status.name = torrent.name;
+            status.downloadPath = torrentPath;
+            status.startTime = Date.now();
+            status.durationSeconds = null;
+            status.files = torrent.files.map((file) => ({
+                name: file.name,
+                path: file.path,
+                lengthBytes: file.length
+            }));
+
+            // update progress using torrent's own counters (safer than summing bytes)
+            const updateProgress = () => {
+                status.progress = Math.round(torrent.progress * 100);
+                status.downloadedBytes = torrent.downloaded;
+            };
+
+            updateProgress();
+
+            torrent.on('download', () => {
+                updateProgress();
+            });
+
+            torrent.on('done', () => {
+                console.log('🏁 Torrent download complete');
+                updateProgress();
+                status.progress = 100;
+                status.isDone = true;
+                status.isDownloading = false;
+
+                const endTime = Date.now();
+                status.durationSeconds = Math.round((endTime - status.startTime) / 1000);
+
+                // remove torrent from client (keeps files on disk)
+                try {
+                    client.remove(torrent.infoHash, () => {
+                        try { client.destroy(); } catch {}
+                    });
+                } catch {
+                    try { client.destroy(); } catch {}
+                }
+            });
+
+            torrent.on('error', (err) => {
+                console.error('❌ Torrent error:', err);
+                status.error = err?.message || String(err);
+                status.isDownloading = false;
+                status.isDone = false; // ensure we don't report done on error
+                try { client.destroy(); } catch {}
+            });
+        }
+    );
 };
 
 export const getTorrentStatus = () => {
@@ -80,6 +121,7 @@ export const getTorrentStatus = () => {
 
 export const cleanUpDownloadFolder = () => {
     throwErrorIfDownloading();
+
     fs.rm(torrentDownloadDir, { recursive: true, force: true }, (err) => {
         if (err) {
             console.error(`⚠️ Failed to delete temp files`, err);
@@ -88,24 +130,22 @@ export const cleanUpDownloadFolder = () => {
         }
     });
 
+    // reset to pristine idle state
     status = { ...DEFAULT_STATUS };
 };
 
 const throwErrorIfInvalidUrl = (torrentUrl) => {
     if (!torrentUrl) {
-        throw new Error("Provide a torrent URL");
-    } else {
-        const parsed = new URL(torrentUrl);
-
-        const isHttp = parsed.protocol === 'http:' || parsed.protocol === 'https:';
-        const isTorrentFile = parsed.pathname.endsWith('.torrent');
-
-        if (!isHttp || !isTorrentFile) throw new Error("Provide a valid torrent URL");
+        throw new Error('Provide a torrent URL');
     }
-}
+    const parsed = new URL(torrentUrl);
+    const isHttp = parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    const isTorrentFile = parsed.pathname.endsWith('.torrent');
+    if (!isHttp || !isTorrentFile) throw new Error('Provide a valid torrent URL');
+};
 
 const throwErrorIfDownloading = () => {
     if (status.isDownloading) {
-        throw new Error("Another torrent is already downloading.");
+        throw new Error('Another torrent is already downloading.');
     }
-}
+};

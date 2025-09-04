@@ -47,13 +47,16 @@ public class TorrentService {
         this.movieService = movieService;
     }
 
-    public void orchestrateTorrentUpload(String torrentUrl) {
+    public void orchestrateTorrentUpload(String torrentUrl) throws UploadServiceException {
         // Step 1: Start download
         log.info("📥 Starting torrent download...");
         startTorrentDownload(torrentUrl);
 
+        // NEW: wait for metadata before parsing title/year
+        TorrentStatus initial = waitForMetadataOrTimeout(Duration.ofSeconds(30));
+
         // Step 2: Get movie title and year
-        List<String> response = getMovieNameAndYear(getCurrentTorrentStatus());
+        List<String> response = getMovieNameAndYear(initial);
         String title = response.getFirst();
         String year = response.getLast();
         log.info("Movie information: {}, {}", title, year);
@@ -128,5 +131,26 @@ public class TorrentService {
 
     private TorrentStatus getCurrentTorrentStatus() {
         return rc.get().uri("/status").retrieve().body(TorrentStatus.class);
+    }
+
+    private TorrentStatus waitForMetadataOrTimeout(Duration timeout) throws UploadServiceException {
+        long deadline = System.currentTimeMillis() + timeout.toMillis();
+        TorrentStatus last = null;
+        while (System.currentTimeMillis() < deadline) {
+            last = getCurrentTorrentStatus();
+            if (last != null) {
+                boolean hasFiles = last.getFiles() != null && !last.getFiles().isEmpty();
+                boolean hasName = last.getName() != null && !last.getName().isBlank();
+                if (hasFiles || hasName || last.isDone()) {
+                    return last;
+                }
+            }
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException interruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        throw new UploadServiceException("Timed out waiting for torrent metadata (name/files). Last status: " + last);
     }
 }

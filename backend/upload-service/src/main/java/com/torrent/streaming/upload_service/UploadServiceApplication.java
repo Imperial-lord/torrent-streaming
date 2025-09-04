@@ -28,7 +28,7 @@ public class UploadServiceApplication implements CommandLineRunner {
         try {
             torrentService.orchestrateTorrentUpload(torrentUrl);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Fatal error in torrent upload", e);
         }
         System.exit(0);
     }

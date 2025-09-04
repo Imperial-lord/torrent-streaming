@@ -23,7 +23,9 @@ body,
 body {
   background: var(--bg);
   color: var(--text);
-  font-feature-settings: "liga" 1, "kern" 1;
+  font-feature-settings:
+    'liga' 1,
+    'kern' 1;
 }
 
 .caption-glow {

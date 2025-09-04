@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans bg-[var(--bg)] text-[var(--ink)]">
-      <TopNav dark={dark} onToggle={() => setDark(d => !d)} />
+      <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
       <ErrorBoundary>
         <Routes>
           {/* public route */}
@@ -29,23 +29,43 @@ export default function App() {
           {/* protected routes */}
           <Route
             path="/"
-            element={<RequireAuth><WatchNow /></RequireAuth>}
+            element={
+              <RequireAuth>
+                <WatchNow />
+              </RequireAuth>
+            }
           />
           <Route
             path="/tvplus"
-            element={<RequireAuth><TVPlus /></RequireAuth>}
+            element={
+              <RequireAuth>
+                <TVPlus />
+              </RequireAuth>
+            }
           />
           <Route
             path="/search"
-            element={<RequireAuth><Search /></RequireAuth>}
+            element={
+              <RequireAuth>
+                <Search />
+              </RequireAuth>
+            }
           />
           <Route
             path="/title/:id"
-            element={<RequireAuth><Details /></RequireAuth>}
+            element={
+              <RequireAuth>
+                <Details />
+              </RequireAuth>
+            }
           />
           <Route
             path="/play/:id"
-            element={<RequireAuth><Player /></RequireAuth>}
+            element={
+              <RequireAuth>
+                <Player />
+              </RequireAuth>
+            }
           />
 
           {/* catch-all */}
@@ -69,38 +89,43 @@ function TopNav({ dark, onToggle }) {
   const signedIn = hasSession()
   return (
     <header className="sticky top-0 z-50 bg-[var(--bg)]/80 backdrop-blur-md">
-      {signedIn && <nav className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-        <div className="text-xl font-display font-semibold">voya tv+</div>
-        <div className="flex gap-6 text-sm">
-          <Tab to="/">Watch Now</Tab>
-          <Tab to="/tvplus">Live TV+</Tab>
-          <Tab to="/search">Search</Tab>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onToggle}
-            className="px-3 py-1 rounded-full border border-ink-700 text-xs"
-            aria-label="Toggle theme"
-          >
-            {dark ? 'Light' : 'Dark'}
-          </button>
-          {!signedIn ? (
+      {signedIn && (
+        <nav className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+          <div className="text-xl font-display font-semibold">voya tv+</div>
+          <div className="flex gap-6 text-sm">
+            <Tab to="/">Watch Now</Tab>
+            <Tab to="/tvplus">Live TV+</Tab>
+            <Tab to="/search">Search</Tab>
+          </div>
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => nav('/login')}
-              className="px-3 py-1 rounded-full border border-ink-700 text-xs hover:bg-ink-800/30"
+              onClick={onToggle}
+              className="px-3 py-1 rounded-full border border-ink-700 text-xs"
+              aria-label="Toggle theme"
             >
-              Sign In
+              {dark ? 'Light' : 'Dark'}
             </button>
-          ) : (
-            <button
-              onClick={() => { logout(); nav('/login', { replace: true }) }}
-              className="px-3 py-1 rounded-full border border-ink-700 text-xs hover:bg-ink-800/30"
-            >
-              Sign Out
-            </button>
-          )}
-        </div>
-      </nav>}
+            {!signedIn ? (
+              <button
+                onClick={() => nav('/login')}
+                className="px-3 py-1 rounded-full border border-ink-700 text-xs hover:bg-ink-800/30"
+              >
+                Sign In
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  logout()
+                  nav('/login', { replace: true })
+                }}
+                className="px-3 py-1 rounded-full border border-ink-700 text-xs hover:bg-ink-800/30"
+              >
+                Sign Out
+              </button>
+            )}
+          </div>
+        </nav>
+      )}
     </header>
   )
 }

@@ -17,7 +17,7 @@ export default function WatchNow() {
     listMovies().then(setAllMovies).catch(console.error)
   }, [])
 
-  const upNextItems = (allMovies || []).filter(m => upnextIds.includes(m.id))
+  const upNextItems = (allMovies || []).filter((m) => upnextIds.includes(m.id))
 
   const hero = useMemo(() => {
     if (!allMovies || allMovies.length === 0) return null
@@ -34,7 +34,9 @@ export default function WatchNow() {
           <div className="mx-auto max-w-6xl px-4 my-6">
             <Skeleton className="h-5 w-40 mb-3" />
             <div className="flex gap-3 overflow-hidden">
-              {Array.from({ length: 8 }).map((_, i) => <PosterSkeleton key={i} />)}
+              {Array.from({ length: 8 }).map((_, i) => (
+                <PosterSkeleton key={i} />
+              ))}
             </div>
           </div>
         </>
@@ -62,7 +64,7 @@ export default function WatchNow() {
           )}
 
           {/* other rails from getHomeRails */}
-          {rails.map(rail => (
+          {rails.map((rail) => (
             <RailCarousel
               key={rail.id}
               title={rail.title}
