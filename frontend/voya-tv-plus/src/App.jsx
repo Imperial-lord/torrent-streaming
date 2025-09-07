@@ -8,7 +8,7 @@ import Player from './pages/Player.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 import { hasSession, logout } from './api/auth'
-import Login from './pages/Login.jsx'
+import Login from "./pages/Login.jsx";
 
 export default function App() {
   const [dark, setDark] = useState(
@@ -91,7 +91,7 @@ function TopNav({ dark, onToggle }) {
     <header className="sticky top-0 z-50 bg-[var(--bg)]/80 backdrop-blur-md">
       {signedIn && (
         <nav className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-          <div className="text-xl font-display font-semibold">voya tv+</div>
+          <NavLink to="/"><div className="text-xl font-display font-semibold">voya tv+</div></NavLink>
           <div className="flex gap-6 text-sm">
             <Tab to="/">Watch Now</Tab>
             <Tab to="/tvplus">Live TV+</Tab>
