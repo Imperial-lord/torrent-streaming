@@ -20,7 +20,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans bg-[var(--bg)] text-[var(--ink)]">
-      <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
       <ErrorBoundary>
         <Routes>
           {/* public route */}
@@ -31,6 +30,7 @@ export default function App() {
             path="/"
             element={
               <RequireAuth>
+                <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
                 <WatchNow />
               </RequireAuth>
             }
@@ -39,6 +39,7 @@ export default function App() {
             path="/tvplus"
             element={
               <RequireAuth>
+                <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
                 <TVPlus />
               </RequireAuth>
             }
@@ -47,6 +48,7 @@ export default function App() {
             path="/search"
             element={
               <RequireAuth>
+                <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
                 <Search />
               </RequireAuth>
             }
@@ -55,6 +57,7 @@ export default function App() {
             path="/title/:id"
             element={
               <RequireAuth>
+                <TopNav dark={dark} onToggle={() => setDark((d) => !d)} />
                 <Details />
               </RequireAuth>
             }

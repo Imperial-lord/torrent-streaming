@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { getMovie } from '../api/client.js'
 import { Volume1, Volume2, VolumeX } from 'lucide-react'
 
@@ -28,6 +28,7 @@ import { fmt } from '../utils/time.js'
 
 export default function Player() {
   const { id } = useParams()
+  const navigate = useNavigate()
 
   // data / media state
   const [m, setM] = useState(null)
@@ -166,6 +167,7 @@ export default function Player() {
             VolumeIcon={VolumeIcon}
             muted={muted}
             volume={volume}
+            onBack={() => navigate(-1)}
             onToggleMute={() => {
               const v = videoRef.current
               if (!v) return

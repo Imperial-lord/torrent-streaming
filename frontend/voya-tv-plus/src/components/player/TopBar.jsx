@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react'
 import Badge from './Badge.jsx'
 
 export default function TopBar({
@@ -8,14 +9,31 @@ export default function TopBar({
   volume,
   onToggleMute,
   onVolume,
+  onBack, // New prop for back navigation
 }) {
   return (
     <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none select-none">
-      <div className="flex items-center gap-4 text-white/90 text-sm pointer-events-auto">
-        {rating && <Badge>{rating}</Badge>}
-        {rating && topGenre && <div className="h-5 w-px bg-white/40" />}
-        {topGenre && <div className="opacity-90">{topGenre}</div>}
+      <div className="flex items-center gap-6 text-white/90 text-sm pointer-events-auto">
+        {/* Back button with subtle styling */}
+        <button
+          className="p-2 rounded-full hover:bg-white/15 text-white/80 hover:text-white transition-all"
+          onClick={onBack}
+          aria-label="Go back"
+          title="Go back"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+
+        {/* Movie info with cleaner spacing */}
+        {(rating || topGenre) && (
+          <div className="flex items-center gap-3">
+            {rating && <Badge>{rating}</Badge>}
+            {rating && topGenre && <span className="text-white/40">•</span>}
+            {topGenre && <div className="opacity-90">{topGenre}</div>}
+          </div>
+        )}
       </div>
+
       <div className="pointer-events-auto flex items-center gap-3">
         <button
           className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
